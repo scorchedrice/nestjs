@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CF_SNS" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/chap1_basic_node" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/chap2_basic_nest/nestjs_server" vcs="Git" />
+  </component>
+</project>
