@@ -1,96 +1,92 @@
 import {Injectable, NotFoundException} from '@nestjs/common';
-
-export interface Post {
-  id: number;
-  author: string;
-  title: string;
-  content: string;
-  likeCount: number;
-  commentCount: number;
-}
-
-let posts : Post[] = [
-  {
-    id: 1,
-    author: 'newjeans_official',
-    title: '뉴진스 민지',
-    content: '메이크업을 고치고 있는 민지',
-    likeCount: 999,
-    commentCount: 90,
-  },
-  {
-    id: 2,
-    author: 'newjeans_official',
-    title: '뉴진스 해린',
-    content: '노래 연습하는 해린',
-    likeCount: 990,
-    commentCount: 111,
-  },
-  {
-    id: 3,
-    author: 'blackpink_official',
-    title: '로제',
-    content: '아파트아파트',
-    likeCount: 990,
-    commentCount: 111,
-  }
-]
+import {Repository} from "typeorm";
+import {PostsModel} from "./entities/posts.entity";
+import {InjectRepository} from "@nestjs/typeorm";
 
 @Injectable()
 export class PostsService {
-  getAllPosts() {
-    return posts;
+  constructor(
+    @InjectRepository(PostsModel)
+    private readonly postsRepository: Repository<PostsModel>
+    // PostsModel을 다루는 레포지토리를 주입하겠다.
+  ){}
+
+  async getAllPosts() {
+    // typeORM은 모두 async (물론 안해도 되지만 await 쓰고싶을 수 있으니.)
+    return this.postsRepository.find();
   }
 
-  getPostById(id: number) {
-    const post = posts.find(post => post.id === id);
+  async getPostById(id: number) {
+    // id값을 찾아 반환하기.
+    const post = await this.postsRepository.findOne(
+      {
+        where: {
+          id,
+        }
+      }
+    );
     if (!post) {
-      throw new NotFoundException(`Post with id ${id} not found`);
+      throw new NotFoundException();
     }
     return post;
   }
 
-  createPost(author: string, title: string, content: string) {
-    const post: Post = {
-      id: posts[posts.length - 1].id + 1,
+  async createPost(author: string, title: string, content: string) {
+    // create => 저장할 객체를 생성한다.
+    // save => 객체를 저장한다. (create 매서드에서 생성한 객체로)
+    // 이를 조합해서 진행하자!
+    const post = this.postsRepository.create({
       author,
       title,
       content,
       likeCount: 0,
       commentCount: 0,
-    };
-    posts = [
-      ...posts,
-      post,
-    ]
-    return post;
+    });
+    const newPost = await this.postsRepository.save(post);
+    return newPost;
   }
 
-  updatePost(id: number, author?:string, title?:string, content?:string) {
-    const post = posts.find(post => post.id === id);
+  async updatePost(id: number, author?:string, title?:string, content?:string) {
+   // save의 기능
+    // 1. 데이터가 존재하지 않으면 (id기준으로) => 새로 생성한다.
+    // 2. 만약에 데이터가 존재한다면 => 존재하던 값을 업데이트 한다.
+    const post = await this.postsRepository.findOne({
+      where: {
+        id,
+      },
+    });
     if (!post) {
-      throw new NotFoundException(`Post with id ${id} not found`);
+      throw new NotFoundException();
     }
+
     if (author) {
       post.author = author;
     }
+
     if (title) {
       post.title = title;
     }
+
     if (content) {
       post.content = content;
     }
-    posts = posts.map((prevPost) => prevPost.id === +id ? post : prevPost);
-    return post;
+
+    const newPost = await this.postsRepository.save(post);
+
+    return newPost;
   }
 
-  deletePost(id: number) {
-    const post = posts.find(post => post.id === id);
+  async deletePost(id: number) {
+    const post = await this.postsRepository.findOne({
+      where: {
+        id,
+      }
+    });
     if (!post) {
-      throw new NotFoundException(`Delete with id ${id} not found`);
+      throw new NotFoundException();
     }
 
-    posts = posts.filter(post => post.id !== +id);
+    await this.postsRepository.delete(id);
     return id;
   }
 }
