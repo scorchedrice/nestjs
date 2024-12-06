@@ -5,5 +5,6 @@
     <mapping directory="$PROJECT_DIR$/CF_SNS" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/chap1_basic_node" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/chap2_basic_nest/nestjs_server" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/type_orm_study" vcs="Git" />
   </component>
 </project>
