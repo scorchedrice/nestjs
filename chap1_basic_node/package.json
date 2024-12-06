@@ -1,0 +1,7 @@
+{
+  "name": "chap1_basic_node",
+  "packageManager": "yarn@4.2.2",
+  "dependencies": {
+    "express": "^4.21.1"
+  }
+}
