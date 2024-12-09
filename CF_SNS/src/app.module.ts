@@ -4,10 +4,11 @@ import { AppService } from './app.service';
 import { PostsModule } from './posts/posts.module';
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {PostsModel} from "./posts/entities/posts.entity";
+import { UsersModule } from './users/users.module';
+import {UsersModel} from "./users/entity/users.entity";
 
 @Module({
   imports: [
-    PostsModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -17,10 +18,13 @@ import {PostsModel} from "./posts/entities/posts.entity";
       database: 'postgres',
       entities: [
         PostsModel,
+        UsersModel,
       ],
       // 개발환경에선 싱크 맞추는게 편리. 그 외는 false
       synchronize: true,
     }),
+    PostsModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
