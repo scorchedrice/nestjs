@@ -1,14 +1,17 @@
 // 여기에 post 관련 모델 생성, sql문 대체
 
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
+import {UsersModel} from "../../users/entity/users.entity";
 
 @Entity()
 export class PostsModel {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  author: string;
+  @ManyToOne(() => UsersModel, (user) => user.posts, {
+    nullable: false,
+  })
+  author: UsersModel;
 
   @Column()
   title: string;

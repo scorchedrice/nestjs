@@ -13,7 +13,9 @@ export class PostsService {
 
   async getAllPosts() {
     // typeORM은 모두 async (물론 안해도 되지만 await 쓰고싶을 수 있으니.)
-    return this.postsRepository.find();
+    return this.postsRepository.find({
+      relations: ['author']
+    });
   }
 
   async getPostById(id: number) {
@@ -22,7 +24,8 @@ export class PostsService {
       {
         where: {
           id,
-        }
+        },
+        relations: ['author']
       }
     );
     if (!post) {
@@ -31,12 +34,14 @@ export class PostsService {
     return post;
   }
 
-  async createPost(author: string, title: string, content: string) {
+  async createPost(authorId: number, title: string, content: string) {
     // create => 저장할 객체를 생성한다.
     // save => 객체를 저장한다. (create 매서드에서 생성한 객체로)
     // 이를 조합해서 진행하자!
     const post = this.postsRepository.create({
-      author,
+      author:{
+        id: authorId,
+      },
       title,
       content,
       likeCount: 0,
@@ -46,7 +51,7 @@ export class PostsService {
     return newPost;
   }
 
-  async updatePost(id: number, author?:string, title?:string, content?:string) {
+  async updatePost(id: number, title?:string, content?:string) {
    // save의 기능
     // 1. 데이터가 존재하지 않으면 (id기준으로) => 새로 생성한다.
     // 2. 만약에 데이터가 존재한다면 => 존재하던 값을 업데이트 한다.
@@ -57,10 +62,6 @@ export class PostsService {
     });
     if (!post) {
       throw new NotFoundException();
-    }
-
-    if (author) {
-      post.author = author;
     }
 
     if (title) {

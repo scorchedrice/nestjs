@@ -26,12 +26,12 @@ export class PostsController {
   // 3.
   @Post()
   postPosts(
-    @Body('author') author: string,
+    @Body('authorId') authorId: number,
     @Body('title') title: string,
     @Body('content') content: string,
   ) {
     return this.postsService.createPost(
-      author, title, content,
+      authorId, title, content,
     )
   }
 
@@ -44,7 +44,7 @@ export class PostsController {
     @Body('content') content?: string,
   ) {
    return this.postsService.updatePost(
-     +id, author, title, content,
+     +id, title, content,
    )
   }
 

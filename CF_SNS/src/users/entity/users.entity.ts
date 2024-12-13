@@ -1,5 +1,6 @@
 import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import { RolesEnum } from "../const/roles.const";
+import {PostsModel} from "../../posts/entities/posts.entity";
 
 // nickname, email은 unique
 // nickname length <= 20
@@ -29,4 +30,7 @@ export class UsersModel {
     default: RolesEnum.USER,
   })
   role: RolesEnum;
+
+  @OneToMany(() => PostsModel, (post) => post.author)
+  posts: PostsModel[];
 }

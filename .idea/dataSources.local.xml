@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="dataSourceStorageLocal" created-in="WS-242.20224.426">
-    <data-source name="nestjs-postgres" uuid="d49ffb2f-df96-4122-969e-62ed643e25ff">
+    <data-source name="type_orm_study" uuid="0c87a3c9-104d-41e2-9299-c6fbf25642c0">
       <database-info product="PostgreSQL" version="15.10 (Debian 15.10-1.pgdg120+1)" jdbc-version="4.2" driver-name="PostgreSQL JDBC Driver" driver-version="42.7.3" dbms="POSTGRES" exact-version="15.10" exact-driver-version="42.7">
         <identifier-quote-string>&quot;</identifier-quote-string>
       </database-info>
@@ -16,7 +16,7 @@
         </introspection-scope>
       </schema-mapping>
     </data-source>
-    <data-source name="type_orm_study" uuid="0c87a3c9-104d-41e2-9299-c6fbf25642c0">
+    <data-source name="nestjs-postgres" uuid="595dcf0d-55e5-4f51-a91d-0173eb4477d7">
       <database-info product="PostgreSQL" version="15.10 (Debian 15.10-1.pgdg120+1)" jdbc-version="4.2" driver-name="PostgreSQL JDBC Driver" driver-version="42.7.3" dbms="POSTGRES" exact-version="15.10" exact-driver-version="42.7">
         <identifier-quote-string>&quot;</identifier-quote-string>
       </database-info>
