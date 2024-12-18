@@ -1,15 +1,15 @@
-import {Injectable, UnauthorizedException} from '@nestjs/common';
-import {JwtService} from "@nestjs/jwt";
-import {UsersModel} from "../users/entity/users.entity";
-import {HASH_ROUNDS, JWT_SECRET} from "./const/auth.const";
-import {UsersService} from "../users/users.service";
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { UsersModel } from '../users/entity/users.entity';
+import { HASH_ROUNDS, JWT_SECRET } from './const/auth.const';
+import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly usersService: UsersService
+    private readonly usersService: UsersService,
   ) {}
 
   /**
@@ -23,7 +23,6 @@ export class AuthService {
    * 6. 토큰이 만료되면 각각의 토큰을 새로 발급받을 수 있도록
    *
    */
-
 
   /**
    * 만드려는 기능
@@ -46,12 +45,12 @@ export class AuthService {
    * - 비밀번호 일치여부 확인
    * - 통과된 경우 사용자 정보 반환 + 토큰
    */
- // 토큰 추출
+  // 토큰 추출
   extractTokenFromHeader(header: string, isBearer: boolean) {
-    const splitToken = header.split(" ");
-    const prefix = isBearer ? "Bearer" : "Basic";
+    const splitToken = header.split(' ');
+    const prefix = isBearer ? 'Bearer' : 'Basic';
     if (splitToken.length !== 2 || splitToken[0] !== prefix) {
-      throw new UnauthorizedException('잘못된 토큰입니다.')
+      throw new UnauthorizedException('잘못된 토큰입니다.');
     }
     const token = splitToken[1];
     return token;
@@ -62,14 +61,15 @@ export class AuthService {
     const decoded = Buffer.from(base64String, 'base64').toString('utf8');
     const split = decoded.split(':');
     if (split.length !== 2) {
-      throw new UnauthorizedException('잘못된 유형의 토큰')
+      throw new UnauthorizedException('잘못된 유형의 토큰');
     }
     const email = split[0];
     const password = split[1];
 
     return {
-      email, password
-    }
+      email,
+      password,
+    };
   }
 
   // token 검증
@@ -80,18 +80,21 @@ export class AuthService {
   }
   // 새로운 토큰 발급
   rotateToken(token: string, isRefreshToken: boolean) {
-    const decoded = this.jwtService.verify(token,{
+    const decoded = this.jwtService.verify(token, {
       secret: JWT_SECRET,
-    })
+    });
 
     if (decoded.type !== 'refresh') {
-      throw new UnauthorizedException('토큰 재발급은 refresh token으로만 해야합니다.')
+      throw new UnauthorizedException(
+        '토큰 재발급은 refresh token으로만 해야합니다.',
+      );
     }
-    return this.signToken({
-      ...decoded,
-    },
+    return this.signToken(
+      {
+        ...decoded,
+      },
       isRefreshToken,
-    )
+    );
   }
 
   /**
@@ -115,11 +118,13 @@ export class AuthService {
   loginUser(user: Pick<UsersModel, 'email' | 'id'>) {
     return {
       accessToken: this.signToken(user, false),
-      refreshToken: this.signToken(user, true)
-    }
+      refreshToken: this.signToken(user, true),
+    };
   }
 
-  async authenticateWithEmailAndPassword(user: Pick<UsersModel, 'email' | 'password'>) {
+  async authenticateWithEmailAndPassword(
+    user: Pick<UsersModel, 'email' | 'password'>,
+  ) {
     // 1. 사용자 정보 확인
     const existingUser = await this.usersService.getUserByEmail(user.email);
     if (!existingUser) {
@@ -128,9 +133,12 @@ export class AuthService {
 
     // 2. 비밀번호의 비교
     // 앞엔 일반 비밀번호 뒤엔 hash값
-    const checkPass = await bcrypt.compare(user.password, existingUser.password);
+    const checkPass = await bcrypt.compare(
+      user.password,
+      existingUser.password,
+    );
     if (!checkPass) {
-      throw new UnauthorizedException('비밀번호가 틀렸습니다.')
+      throw new UnauthorizedException('비밀번호가 틀렸습니다.');
     }
 
     return existingUser;
@@ -141,7 +149,9 @@ export class AuthService {
     return this.loginUser(existingUser);
   }
 
-  async registerWithEmail(user: Pick<UsersModel, 'email' | 'password' | 'nickname'>) {
+  async registerWithEmail(
+    user: Pick<UsersModel, 'email' | 'password' | 'nickname'>,
+  ) {
     // bcrypt의 경우 해시화 하고 싶은 패스워드 , round를 변수로 적는다.
     // rounds는 hash에 소요되는 시간을 의미한다.
     const hash = await bcrypt.hash(user.password, HASH_ROUNDS);

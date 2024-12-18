@@ -3,9 +3,9 @@
   <database-model serializer="dbm" dbms="POSTGRES" family-id="POSTGRES" format-version="4.53">
     <root id="1">
       <DateStyle>mdy</DateStyle>
-      <IntrospectionStateNumber>743</IntrospectionStateNumber>
+      <IntrospectionStateNumber>742</IntrospectionStateNumber>
       <ServerVersion>15.10</ServerVersion>
-      <StartupTime>1733814662</StartupTime>
+      <StartupTime>1734542098</StartupTime>
       <TimeZones>true ACDT
 true ACSST
 false ACST
@@ -1404,7 +1404,7 @@ false posixrules
 13209||10|C|G
 13209||-9223372036854775808|U|G
 13209||10|U|G</Grants>
-      <IntrospectionStateNumber>743</IntrospectionStateNumber>
+      <IntrospectionStateNumber>742</IntrospectionStateNumber>
       <ObjectId>5</ObjectId>
       <OwnerName>postgres</OwnerName>
     </database>
@@ -4817,14 +4817,14 @@ false posixrules
     <schema id="262" parent="3" name="public">
       <Comment>standard public schema</Comment>
       <Current>1</Current>
-      <IntrospectionStateNumber>743</IntrospectionStateNumber>
-      <LastIntrospectionLocalTimestamp>2024-12-10.07:15:07</LastIntrospectionLocalTimestamp>
+      <IntrospectionStateNumber>742</IntrospectionStateNumber>
+      <LastIntrospectionLocalTimestamp>2024-12-18.17:21:54</LastIntrospectionLocalTimestamp>
       <ObjectId>2200</ObjectId>
       <StateNumber>518</StateNumber>
       <OwnerName>pg_database_owner</OwnerName>
     </schema>
     <sequence id="263" parent="262" name="posts_model_id_seq">
-      <ObjectId>16399</ObjectId>
+      <ObjectId>16401</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
       <StartValue>1</StartValue>
       <StateNumber>726</StateNumber>
@@ -4840,8 +4840,8 @@ false posixrules
       <OwnerName>postgres</OwnerName>
     </sequence>
     <table id="265" parent="262" name="posts_model">
-      <ObjectId>16400</ObjectId>
-      <StateNumber>726</StateNumber>
+      <ObjectId>16402</ObjectId>
+      <StateNumber>739</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>postgres</OwnerName>
     </table>
@@ -4857,7 +4857,7 @@ false posixrules
       <Position>1</Position>
       <StateNumber>726</StateNumber>
       <StoredType>integer|0s</StoredType>
-      <SequenceId>16399</SequenceId>
+      <SequenceId>16401</SequenceId>
       <TypeId>23</TypeId>
     </column>
     <column id="268" parent="265" name="title">
@@ -4895,28 +4895,44 @@ false posixrules
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <foreign-key id="273" parent="265" name="FK_c8b7f084ae29a7104846f1bec05">
+    <column id="273" parent="265" name="updatedAt">
+      <DefaultExpression>now()</DefaultExpression>
+      <NotNull>1</NotNull>
+      <Position>7</Position>
+      <StateNumber>739</StateNumber>
+      <StoredType>timestamp|0s</StoredType>
+      <TypeId>1114</TypeId>
+    </column>
+    <column id="274" parent="265" name="createdAt">
+      <DefaultExpression>now()</DefaultExpression>
+      <NotNull>1</NotNull>
+      <Position>8</Position>
+      <StateNumber>739</StateNumber>
+      <StoredType>timestamp|0s</StoredType>
+      <TypeId>1114</TypeId>
+    </column>
+    <foreign-key id="275" parent="265" name="FK_c8b7f084ae29a7104846f1bec05">
       <ColNames>authorId</ColNames>
-      <ObjectId>16408</ObjectId>
+      <ObjectId>16410</ObjectId>
       <StateNumber>726</StateNumber>
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>16386</RefTableId>
     </foreign-key>
-    <index id="274" parent="265" name="PK_d70f19613eb641c94bb122c4397">
+    <index id="276" parent="265" name="PK_d70f19613eb641c94bb122c4397">
       <ColNames>id</ColNames>
-      <ObjectId>16406</ObjectId>
+      <ObjectId>16408</ObjectId>
       <Primary>1</Primary>
       <StateNumber>726</StateNumber>
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <key id="275" parent="265" name="PK_d70f19613eb641c94bb122c4397">
-      <ObjectId>16407</ObjectId>
+    <key id="277" parent="265" name="PK_d70f19613eb641c94bb122c4397">
+      <ObjectId>16409</ObjectId>
       <Primary>1</Primary>
       <StateNumber>726</StateNumber>
-      <UnderlyingIndexId>16406</UnderlyingIndexId>
+      <UnderlyingIndexId>16408</UnderlyingIndexId>
     </key>
-    <column id="276" parent="266" name="id">
+    <column id="278" parent="266" name="id">
       <DefaultExpression>nextval(&apos;users_model_id_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -4925,28 +4941,28 @@ false posixrules
       <SequenceId>16385</SequenceId>
       <TypeId>23</TypeId>
     </column>
-    <column id="277" parent="266" name="nickname">
+    <column id="279" parent="266" name="nickname">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StateNumber>726</StateNumber>
       <StoredType>varchar(20)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <column id="278" parent="266" name="email">
+    <column id="280" parent="266" name="email">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StateNumber>726</StateNumber>
       <StoredType>varchar|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <column id="279" parent="266" name="password">
+    <column id="281" parent="266" name="password">
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StateNumber>726</StateNumber>
       <StoredType>varchar|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <column id="280" parent="266" name="role">
+    <column id="282" parent="266" name="role">
       <DefaultExpression>&apos;USER&apos;::character varying</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>5</Position>
@@ -4954,26 +4970,32 @@ false posixrules
       <StoredType>varchar|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <index id="281" parent="266" name="PK_1355f66d5ebddb2449c566571c8">
+    <column id="283" parent="266" name="updatedAt">
+      <DefaultExpression>now()</DefaultExpression>
+      <NotNull>1</NotNull>
+      <Position>6</Position>
+      <StateNumber>726</StateNumber>
+      <StoredType>timestamp|0s</StoredType>
+      <TypeId>1114</TypeId>
+    </column>
+    <column id="284" parent="266" name="createdAt">
+      <DefaultExpression>now()</DefaultExpression>
+      <NotNull>1</NotNull>
+      <Position>7</Position>
+      <StateNumber>726</StateNumber>
+      <StoredType>timestamp|0s</StoredType>
+      <TypeId>1114</TypeId>
+    </column>
+    <index id="285" parent="266" name="PK_1355f66d5ebddb2449c566571c8">
       <ColNames>id</ColNames>
-      <ObjectId>16393</ObjectId>
+      <ObjectId>16395</ObjectId>
       <Primary>1</Primary>
       <StateNumber>726</StateNumber>
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <index id="282" parent="266" name="UQ_cf2c74837f74a2d823d330293a4">
+    <index id="286" parent="266" name="UQ_cf2c74837f74a2d823d330293a4">
       <ColNames>nickname</ColNames>
-      <ObjectId>16395</ObjectId>
-      <StateNumber>726</StateNumber>
-      <Unique>1</Unique>
-      <AccessMethodId>403</AccessMethodId>
-      <CollationNames>default</CollationNames>
-      <CollationIds>100</CollationIds>
-      <CollationParentNames>pg_catalog</CollationParentNames>
-    </index>
-    <index id="283" parent="266" name="UQ_d3129562d6ac1c574e5e909e4ed">
-      <ColNames>email</ColNames>
       <ObjectId>16397</ObjectId>
       <StateNumber>726</StateNumber>
       <Unique>1</Unique>
@@ -4982,21 +5004,31 @@ false posixrules
       <CollationIds>100</CollationIds>
       <CollationParentNames>pg_catalog</CollationParentNames>
     </index>
-    <key id="284" parent="266" name="PK_1355f66d5ebddb2449c566571c8">
-      <ObjectId>16394</ObjectId>
-      <Primary>1</Primary>
+    <index id="287" parent="266" name="UQ_d3129562d6ac1c574e5e909e4ed">
+      <ColNames>email</ColNames>
+      <ObjectId>16399</ObjectId>
       <StateNumber>726</StateNumber>
-      <UnderlyingIndexId>16393</UnderlyingIndexId>
-    </key>
-    <key id="285" parent="266" name="UQ_cf2c74837f74a2d823d330293a4">
+      <Unique>1</Unique>
+      <AccessMethodId>403</AccessMethodId>
+      <CollationNames>default</CollationNames>
+      <CollationIds>100</CollationIds>
+      <CollationParentNames>pg_catalog</CollationParentNames>
+    </index>
+    <key id="288" parent="266" name="PK_1355f66d5ebddb2449c566571c8">
       <ObjectId>16396</ObjectId>
+      <Primary>1</Primary>
       <StateNumber>726</StateNumber>
       <UnderlyingIndexId>16395</UnderlyingIndexId>
     </key>
-    <key id="286" parent="266" name="UQ_d3129562d6ac1c574e5e909e4ed">
+    <key id="289" parent="266" name="UQ_cf2c74837f74a2d823d330293a4">
       <ObjectId>16398</ObjectId>
       <StateNumber>726</StateNumber>
       <UnderlyingIndexId>16397</UnderlyingIndexId>
+    </key>
+    <key id="290" parent="266" name="UQ_d3129562d6ac1c574e5e909e4ed">
+      <ObjectId>16400</ObjectId>
+      <StateNumber>726</StateNumber>
+      <UnderlyingIndexId>16399</UnderlyingIndexId>
     </key>
   </database-model>
 </dataSource>
