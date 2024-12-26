@@ -1,5 +1,9 @@
-import {Controller, Get, Post, NotFoundException, Param, Body, Put, Delete} from '@nestjs/common';
+import {Controller, Get, Post, Param, Body, Put, Delete, UseGuards, Request} from '@nestjs/common';
 import { PostsService } from './posts.service';
+import {AccessTokenGuard} from "../auth/guard/bearer-token.guard";
+import {AuthService} from "../auth/auth.service";
+import {UsersModel} from "../users/entity/users.entity";
+import {User} from "../users/decorator/user.decorator";
 
 @Controller('posts')
 export class PostsController {
@@ -24,12 +28,16 @@ export class PostsController {
   }
 
   // 3.
+  // Token을 담아 보낸다 ? 여기서 유저 정보 가져올 수 있음.
   @Post()
+  @UseGuards(AccessTokenGuard)
   postPosts(
-    @Body('authorId') authorId: number,
+    // @Request() req : any,
+    @User('id') userId: number,
     @Body('title') title: string,
     @Body('content') content: string,
   ) {
+    const authorId = userId;
     return this.postsService.createPost(
       authorId, title, content,
     )
