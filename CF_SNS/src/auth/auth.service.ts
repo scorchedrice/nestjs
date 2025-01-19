@@ -4,6 +4,7 @@ import { UsersModel } from '../users/entity/users.entity';
 import { HASH_ROUNDS, JWT_SECRET } from './const/auth.const';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
+import {RegisterUserDto} from "./dto/register-user.dto";
 
 @Injectable()
 export class AuthService {
@@ -155,7 +156,7 @@ export class AuthService {
   }
 
   async registerWithEmail(
-    user: Pick<UsersModel, 'email' | 'password' | 'nickname'>,
+    user: RegisterUserDto,
   ) {
     // bcrypt의 경우 해시화 하고 싶은 패스워드 , round를 변수로 적는다.
     // rounds는 hash에 소요되는 시간을 의미한다.

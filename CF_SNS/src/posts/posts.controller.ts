@@ -1,9 +1,25 @@
-import {Controller, Get, Post, Param, Body, Put, Delete, UseGuards, Request} from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Body,
+  Put,
+  Delete,
+  UseGuards,
+  Request,
+  Patch,
+  ParseIntPipe,
+  Query,
+} from '@nestjs/common';
 import { PostsService } from './posts.service';
-import {AccessTokenGuard} from "../auth/guard/bearer-token.guard";
-import {AuthService} from "../auth/auth.service";
-import {UsersModel} from "../users/entity/users.entity";
-import {User} from "../users/decorator/user.decorator";
+import { AccessTokenGuard } from '../auth/guard/bearer-token.guard';
+import { AuthService } from '../auth/auth.service';
+import { UsersModel } from '../users/entity/users.entity';
+import { User } from '../users/decorator/user.decorator';
+import { CreatePostDto } from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
+import { PaginatePostDto } from './dto/paginate-post.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -17,8 +33,8 @@ export class PostsController {
 
   // 1.
   @Get()
-  getPosts() {
-    return this.postsService.getAllPosts();
+  getPosts(@Query() query: PaginatePostDto) {
+    return this.postsService.paginatePosts(query);
   }
 
   // 2.
@@ -34,26 +50,23 @@ export class PostsController {
   postPosts(
     // @Request() req : any,
     @User('id') userId: number,
-    @Body('title') title: string,
-    @Body('content') content: string,
+    @Body() body: CreatePostDto,
+    // @Body('title') title: string,
+    // @Body('content') content: string,
   ) {
     const authorId = userId;
-    return this.postsService.createPost(
-      authorId, title, content,
-    )
+    return this.postsService.createPost(authorId, body);
   }
 
   // 4.
-  @Put(':id')
-  putPost(
-    @Param('id') id: string,
-    @Body('author') author?: string,
-    @Body('title') title?: string,
-    @Body('content') content?: string,
+  @Patch(':id')
+  patchPost(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdatePostDto,
+    // @Body('title') title?: string,
+    // @Body('content') content?: string,
   ) {
-   return this.postsService.updatePost(
-     +id, title, content,
-   )
+    return this.postsService.updatePost(id, body);
   }
 
   // 5.
