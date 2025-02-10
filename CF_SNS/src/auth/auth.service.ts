@@ -1,16 +1,21 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersModel } from '../users/entity/users.entity';
-import { HASH_ROUNDS, JWT_SECRET } from './const/auth.const';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { RegisterUserDto } from './dto/register-user.dto';
+import { ConfigService } from '@nestjs/config';
+import {
+  ENV_HASH_ROUNDS_KEY,
+  ENV_JWT_SECRET_KEY,
+} from '../common/const/env-keys.const';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
+    private readonly configService: ConfigService,
   ) {}
 
   /**
@@ -77,16 +82,16 @@ export class AuthService {
   verifyToken(token: string) {
     try {
       return this.jwtService.verify(token, {
-        secret: JWT_SECRET,
+        secret: this.configService.get(ENV_JWT_SECRET_KEY),
       });
     } catch (e) {
-      throw new UnauthorizedException('만료되거나 잘못된 토큰');
+      throw new UnauthorizedException('만료되거나 잘못된 토큰', e);
     }
   }
   // 새로운 토큰 발급
   rotateToken(token: string, isRefreshToken: boolean) {
     const decoded = this.jwtService.verify(token, {
-      secret: JWT_SECRET,
+      secret: this.configService.get(ENV_JWT_SECRET_KEY),
     });
 
     if (decoded.type !== 'refresh') {
@@ -115,7 +120,7 @@ export class AuthService {
       type: isRefreshToken ? 'refresh' : 'access',
     };
     return this.jwtService.sign(payload, {
-      secret: JWT_SECRET,
+      secret: this.configService.get(ENV_JWT_SECRET_KEY),
       expiresIn: isRefreshToken ? 3600 : 300,
     });
   }
@@ -157,7 +162,10 @@ export class AuthService {
   async registerWithEmail(user: RegisterUserDto) {
     // bcrypt의 경우 해시화 하고 싶은 패스워드 , round를 변수로 적는다.
     // rounds는 hash에 소요되는 시간을 의미한다.
-    const hash = await bcrypt.hash(user.password, HASH_ROUNDS);
+    const hash = await bcrypt.hash(
+      user.password,
+      this.configService.get(ENV_HASH_ROUNDS_KEY),
+    );
 
     const newUser = await this.usersService.createUser({
       ...user,

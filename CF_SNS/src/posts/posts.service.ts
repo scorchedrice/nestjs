@@ -5,8 +5,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PaginatePostDto } from './dto/paginate-post.dto';
-import { HOST, PROTOCOL } from '../common/const/env.const';
 import { CommonService } from '../common/common.service';
+import { ConfigService } from '@nestjs/config';
+import { ENV_HOST_KEY, ENV_PROTOCOL_KEY } from '../common/const/env-keys.const';
 
 @Injectable()
 export class PostsService {
@@ -15,6 +16,7 @@ export class PostsService {
     private readonly postsRepository: Repository<PostsModel>,
     // PostsModel을 다루는 레포지토리를 주입하겠다.
     private readonly commonService: CommonService,
+    private readonly configService: ConfigService,
   ) {}
 
   async getAllPosts() {
@@ -85,7 +87,11 @@ export class PostsService {
       posts.length > 0 && posts.length === dto.take
         ? posts[posts.length - 1]
         : null;
-    const nextUrl = lastItem && new URL(`${PROTOCOL}://${HOST}/posts`);
+    const nextUrl =
+      lastItem &&
+      new URL(
+        `${this.configService.get(ENV_PROTOCOL_KEY)}://${this.configService.get(ENV_HOST_KEY)}/posts`,
+      );
     if (nextUrl) {
       // dto의 키값을 루핑하면서, 키값에 해당하는 밸류가 존재한다면
       // param에 그대로 붙혀 넣는다.

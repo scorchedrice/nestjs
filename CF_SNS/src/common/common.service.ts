@@ -8,11 +8,12 @@ import {
   Repository,
 } from 'typeorm';
 import { FILTER_MAPPER } from './const/filter-mapper.const';
-import { HOST, PROTOCOL } from './const/env.const';
-import * as path from 'node:path';
+import { ConfigService } from '@nestjs/config';
+import { ENV_HOST_KEY, ENV_PROTOCOL_KEY } from './const/env-keys.const';
 
 @Injectable()
 export class CommonService {
+  constructor(private readonly configService: ConfigService) {}
   paginate<T extends BaseModel>(
     dto: BasePaginationDto,
     repository: Repository<T>,
@@ -60,7 +61,11 @@ export class CommonService {
       results.length > 0 && results.length === dto.take
         ? results[results.length - 1]
         : null;
-    const nextUrl = lastItem && new URL(`${PROTOCOL}://${HOST}/${path}`);
+    const nextUrl =
+      lastItem &&
+      new URL(
+        `${this.configService.get(ENV_PROTOCOL_KEY)}://${this.configService.get(ENV_HOST_KEY)}/${path}`,
+      );
     if (nextUrl) {
       // dto의 키값을 루핑하면서, 키값에 해당하는 밸류가 존재한다면
       // param에 그대로 붙혀 넣는다.
@@ -150,11 +155,11 @@ export class CommonService {
 
     if (split.length === 2) {
       // 특정 id를 찾는 경우겠지
-      const [_, field] = split;
+      const [, field] = split;
       options[field] = value;
     } else {
       // more_than, less_than과 같은 것 활용하는 경우
-      const [_, field, operator] = split;
+      const [, field, operator] = split;
 
       // operator가 여러개의 값을 요구하는 경우엔 아래처럼 로직을 추가해 구현한다.
       // const values = value.toString().split(',')
