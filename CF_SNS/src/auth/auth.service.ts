@@ -4,7 +4,7 @@ import { UsersModel } from '../users/entity/users.entity';
 import { HASH_ROUNDS, JWT_SECRET } from './const/auth.const';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
-import {RegisterUserDto} from "./dto/register-user.dto";
+import { RegisterUserDto } from './dto/register-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -82,7 +82,6 @@ export class AuthService {
     } catch (e) {
       throw new UnauthorizedException('만료되거나 잘못된 토큰');
     }
-
   }
   // 새로운 토큰 발급
   rotateToken(token: string, isRefreshToken: boolean) {
@@ -155,9 +154,7 @@ export class AuthService {
     return this.loginUser(existingUser);
   }
 
-  async registerWithEmail(
-    user: RegisterUserDto,
-  ) {
+  async registerWithEmail(user: RegisterUserDto) {
     // bcrypt의 경우 해시화 하고 싶은 패스워드 , round를 변수로 적는다.
     // rounds는 hash에 소요되는 시간을 의미한다.
     const hash = await bcrypt.hash(user.password, HASH_ROUNDS);

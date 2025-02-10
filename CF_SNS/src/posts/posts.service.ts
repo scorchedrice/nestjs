@@ -1,10 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { MoreThan, Repository } from 'typeorm';
+import { FindOptionsWhere, LessThan, MoreThan, Repository } from 'typeorm';
 import { PostsModel } from './entities/posts.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PaginatePostDto } from './dto/paginate-post.dto';
+import { HOST, PROTOCOL } from '../common/const/env.const';
+import { CommonService } from '../common/common.service';
 
 @Injectable()
 export class PostsService {
@@ -12,6 +14,7 @@ export class PostsService {
     @InjectRepository(PostsModel)
     private readonly postsRepository: Repository<PostsModel>,
     // PostsModel을 다루는 레포지토리를 주입하겠다.
+    private readonly commonService: CommonService,
   ) {}
 
   async getAllPosts() {
@@ -21,17 +24,92 @@ export class PostsService {
     });
   }
 
-  // 오름차순으로 정렬하는 pagination
   async paginatePosts(dto: PaginatePostDto) {
-    const posts = await this.postsRepository.find({
-      where: {
-        id: MoreThan(dto.where__id_more_than ?? 0),
+    return this.commonService.paginate(
+      dto,
+      this.postsRepository,
+      {
+        relations: ['author'],
       },
+      'posts',
+    );
+    // if (dto.page) {
+    //   return this.pagePaginate(dto);
+    // } else {
+    //   return this.cursorPaginate(dto);
+    // }
+  }
+
+  async pagePaginate(dto: PaginatePostDto) {
+    /**
+     * data: Data[],
+     * total : number,
+     */
+    const [posts, count] = await this.postsRepository.findAndCount({
+      // 1번 페이지부터 시작하고, 페이지마다 갯수가 정해져 있음.
+      // 특정 페이지는 1번페이지부터 특정 페이지 전 페이지까지의 갯수를 스킵
+      skip: dto.take * (dto.page - 1),
+      take: dto.take,
+      order: {
+        createdAt: dto.order__createdAt,
+      },
+    });
+    return {
+      data: posts,
+      total: count,
+    };
+  }
+
+  async cursorPaginate(dto: PaginatePostDto) {
+    // 네이밍 규칙 => 객체__객체내부_설명 이라고 생각하면 된다.
+
+    const where: FindOptionsWhere<PostsModel> = {};
+
+    if (dto.where__id__less_than) {
+      where.id = LessThan(dto.where__id__less_than);
+    } else if (dto.where__id__more_than) {
+      where.id = MoreThan(dto.where__id__more_than);
+    }
+
+    const posts = await this.postsRepository.find({
+      where,
       order: {
         createdAt: dto.order__createdAt,
       },
       take: dto.take,
     });
+
+    // 해당되는 post 0개 이상 => 마지막 포스트 가져옴
+    // 아니라면 null 반환
+    const lastItem =
+      posts.length > 0 && posts.length === dto.take
+        ? posts[posts.length - 1]
+        : null;
+    const nextUrl = lastItem && new URL(`${PROTOCOL}://${HOST}/posts`);
+    if (nextUrl) {
+      // dto의 키값을 루핑하면서, 키값에 해당하는 밸류가 존재한다면
+      // param에 그대로 붙혀 넣는다.
+      // 단 id값만 lastItem의 마지막 값을 넣어준다.
+      for (const key of Object.keys(dto)) {
+        if (dto[key]) {
+          if (
+            key !== 'where__id__more_than' &&
+            key !== 'where__id__less_than'
+          ) {
+            nextUrl.searchParams.append(key, dto[key]);
+          }
+        }
+      }
+
+      let key = null;
+      if (dto.order__createdAt === 'ASC') {
+        key = 'where__id__more_than';
+      } else {
+        key = 'where__id__less_than';
+      }
+
+      nextUrl.searchParams.append(key, lastItem.id.toString());
+    }
     /**
      * Response양식
      * data : Data[],
@@ -41,7 +119,24 @@ export class PostsService {
      * count : 응답 데이터의 개수
      * next : 다음 요청을 할 때 사용할 URL
      */
-    return { data: posts };
+    return {
+      data: posts,
+      counts: posts.length,
+      cursor: {
+        // null => null 반환해야하므로.
+        after: lastItem?.id ?? null,
+      },
+      next: nextUrl?.toString() ?? null,
+    };
+  }
+
+  async generatePosts(userId: number) {
+    for (let i = 0; i < 100; i++) {
+      await this.createPost(userId, {
+        title: `임의 ${i}번째 post`,
+        content: `임의 ${i}번째 content`,
+      });
+    }
   }
 
   async getPostById(id: number) {

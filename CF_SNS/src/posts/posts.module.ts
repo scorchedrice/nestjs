@@ -5,6 +5,7 @@ import {TypeOrmModule} from "@nestjs/typeorm";
 import {PostsModel} from "./entities/posts.entity";
 import {AuthModule} from "../auth/auth.module";
 import {UsersModule} from "../users/users.module";
+import { CommonModule } from "../common/common.module";
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import {UsersModule} from "../users/users.module";
     ]),
     AuthModule,
     UsersModule,
+    CommonModule,
   ],
   // forRoot : typeORM을 연결 설정할 때
   // forFeature : model에 해당하는 레포지토리를 주입할 때

@@ -37,6 +37,14 @@ export class PostsController {
     return this.postsService.paginatePosts(query);
   }
 
+  // 임의 데이터 생성 POST / posts/random
+  @Post('random')
+  @UseGuards(AccessTokenGuard)
+  async postPostsRandom(@User() user: UsersModel) {
+    await this.postsService.generatePosts(user.id);
+    return true;
+  }
+
   // 2.
   @Get(':id')
   getPost(@Param('id') id: string) {

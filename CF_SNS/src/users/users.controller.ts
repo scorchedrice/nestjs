@@ -12,7 +12,6 @@ export class UsersController {
   //             return this.usersService.createUser({nickname, email, password});
   //          }
   @Get()
-  @UseInterceptors(ClassSerializerInterceptor)
   getAllUsers() {
     return this.usersService.getAllUsers();
   }

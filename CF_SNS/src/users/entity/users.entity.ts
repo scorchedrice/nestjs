@@ -1,14 +1,25 @@
-import {Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
-import { RolesEnum } from "../const/roles.const";
-import {PostsModel} from "../../posts/entities/posts.entity";
-import {BaseModel} from "../../common/entity/base.entity";
-import {IsEmail, IsString, Length, ValidationArguments} from "class-validator";
-import {lengthValidationMessage} from "../../common/validation-message/length-validation.message";
-import {Exclude} from "class-transformer";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { RolesEnum } from '../const/roles.const';
+import { PostsModel } from '../../posts/entities/posts.entity';
+import { BaseModel } from '../../common/entity/base.entity';
+import {
+  IsEmail,
+  IsString,
+  Length,
+  ValidationArguments,
+} from 'class-validator';
+import { lengthValidationMessage } from '../../common/validation-message/length-validation.message';
+import { Exclude } from 'class-transformer';
 
 // nickname, email은 unique
 // nickname length <= 20
-
 
 @Entity()
 export class UsersModel extends BaseModel {
@@ -17,8 +28,8 @@ export class UsersModel extends BaseModel {
     unique: true,
   })
   @IsString()
-  @Length(1,20, {
-    message: lengthValidationMessage
+  @Length(1, 20, {
+    message: lengthValidationMessage,
   })
   nickname: string;
 
@@ -31,7 +42,7 @@ export class UsersModel extends BaseModel {
 
   @Column()
   @IsString()
-  @Length(3,8)
+  @Length(3, 8)
   @Exclude({
     toPlainOnly: true,
   })
